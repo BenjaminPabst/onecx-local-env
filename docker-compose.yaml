@@ -58,7 +58,7 @@ services:
   pgadmin:
     image: ${PGADMIN}
     environment:
-      PGADMIN_DEFAULT_EMAIL: capgemini@capgemini.com
+      PGADMIN_DEFAULT_EMAIL: user@example.com
       PGADMIN_DEFAULT_PASSWORD: mysecretpassword
     volumes:
       - ./init-data/pgadmin/servers.json:/pgadmin4/servers.json
@@ -70,6 +70,8 @@ services:
       - "traefik.http.routers.pgadmin.rule=Host(`pgadmin`)"
     networks:
       - example
+    profiles:
+      - all
 
   #############################################
   ################ Security ###################
@@ -163,8 +165,6 @@ services:
         condition: service_started
       onecx-user-profile-svc:
         condition: service_started
-      onecx-iam-kc-svc:
-        condition: service_started
       onecx-tenant-svc:
         condition: service_started
       onecx-workspace-svc:
@@ -222,6 +222,8 @@ services:
       - bff.env
     networks:
       - example
+    profiles:
+      - all
 
   onecx-theme-ui:
     image: ${ONECX_THEME_UI}
@@ -232,13 +234,13 @@ services:
     depends_on:
       onecx-theme-bff:
         condition: service_healthy
-      onecx-shell-ui:
-        condition: service_started
     labels:
       - "traefik.http.services.onecx-theme-ui.loadbalancer.server.port=8080"
       - "traefik.http.routers.onecx-theme-ui.rule=Host(`local-proxy`)&&PathPrefix(`/mfe/theme/`)"
     networks:
       - example
+    profiles:
+      - all
 
   ########## ONECX WORKSPACE
   onecx-workspace-svc:
@@ -297,8 +299,6 @@ services:
     depends_on:
       onecx-workspace-bff:
         condition: service_healthy
-      onecx-shell-ui:
-        condition: service_started
     labels:
       - "traefik.http.services.onecx-workspace-ui.loadbalancer.server.port=8080"
       - "traefik.http.routers.onecx-workspace-ui.rule=Host(`local-proxy`)&&PathPrefix(`/mfe/workspace/`)"
@@ -352,6 +352,8 @@ services:
       - bff.env
     networks:
       - example
+    profiles:
+      - all
 
   onecx-permission-ui:
     image: ${ONECX_PERMISSION_UI}
@@ -362,13 +364,13 @@ services:
     depends_on:
       onecx-permission-bff:
         condition: service_healthy
-      onecx-shell-ui:
-        condition: service_started
     labels:
       - "traefik.http.services.onecx-permission-ui.loadbalancer.server.port=8080"
       - "traefik.http.routers.onecx-permission-ui.rule=Host(`local-proxy`)&&PathPrefix(`/mfe/permission/`)"
     networks:
       - example
+    profiles:
+      - all
 
   ########## ONECX-PRODUCT-STORE
   onecx-product-store-svc:
@@ -414,6 +416,8 @@ services:
       - bff.env
     networks:
       - example
+    profiles:
+      - all
 
   onecx-product-store-ui:
     image: ${ONECX_PRODUCT_STORE_UI}
@@ -424,13 +428,13 @@ services:
     depends_on:
       onecx-product-store-bff:
         condition: service_healthy
-      onecx-shell-ui:
-        condition: service_started
     labels:
       - "traefik.http.services.onecx-product-store-ui.loadbalancer.server.port=8080"
       - "traefik.http.routers.onecx-product-store-ui.rule=Host(`local-proxy`)&&PathPrefix(`/mfe/product-store/`)"
     networks:
       - example
+    profiles:
+      - all
 
   ########## ONECX-USER-PROFILE
   onecx-user-profile-svc:
@@ -476,6 +480,8 @@ services:
       - bff.env
     networks:
       - example
+    profiles:
+      - all
 
   onecx-user-profile-ui:
     image: ${ONECX_USER_PROFILE_UI}
@@ -486,13 +492,13 @@ services:
     depends_on:
       onecx-user-profile-bff:
         condition: service_healthy
-      onecx-shell-ui:
-        condition: service_started
     labels:
       - "traefik.http.services.onecx-user-profile-ui.loadbalancer.server.port=8080"
       - "traefik.http.routers.onecx-user-profile-ui.rule=Host(`local-proxy`)&&PathPrefix(`/mfe/user-profile/`)"
     networks:
       - example
+    profiles:
+      - all
 
   ########## ONECX-IAM
   onecx-iam-kc-svc:
@@ -518,6 +524,8 @@ services:
       - svc.env
     networks:
       - example
+    profiles:
+      - all
 
   onecx-iam-bff:
     image: ${ONECX_IAM_BFF}
@@ -539,6 +547,8 @@ services:
       - bff.env
     networks:
       - example
+    profiles:
+      - all
 
   onecx-iam-ui:
     image: ${ONECX_IAM_UI}
@@ -549,13 +559,13 @@ services:
     depends_on:
       onecx-iam-bff:
         condition: service_healthy
-      onecx-shell-ui:
-        condition: service_started
     labels:
       - "traefik.http.services.onecx-iam-ui.loadbalancer.server.port=8080"
       - "traefik.http.routers.onecx-iam-ui.rule=Host(`local-proxy`)&&PathPrefix(`/mfe/iam/`)"
     networks:
       - example
+    profiles:
+      - all
 
   ########## ONECX-TENANT
   onecx-tenant-svc:
@@ -604,6 +614,8 @@ services:
       - bff.env
     networks:
       - example
+    profiles:
+      - all
 
   onecx-tenant-ui:
     image: ${ONECX_TENANT_UI}
@@ -614,13 +626,80 @@ services:
     depends_on:
       onecx-tenant-bff:
         condition: service_healthy
-      onecx-shell-ui:
-        condition: service_started
     labels:
       - "traefik.http.services.onecx-tenant-ui.loadbalancer.server.port=8080"
       - "traefik.http.routers.onecx-tenant-ui.rule=Host(`local-proxy`)&&PathPrefix(`/mfe/tenant/`)"
     networks:
       - example
+    profiles:
+      - all
+
+  ########## ONECX-WELCOME
+  onecx-welcome-svc:
+    image: ${ONECX_WELCOME_SVC}
+    environment:
+      QUARKUS_DATASOURCE_USERNAME: onecx_welcome
+      QUARKUS_DATASOURCE_PASSWORD: onecx_welcome
+      QUARKUS_DATASOURCE_JDBC_URL: "jdbc:postgresql://postgresdb:5432/onecx_welcome?sslmode=disable"
+    healthcheck:
+      test: curl --head -fsS http://localhost:8080/q/health
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    depends_on:
+      postgresdb:
+        condition: service_healthy
+    labels:
+      - "traefik.http.services.onecx-welcome-svc.loadbalancer.server.port=8080"
+      - "traefik.http.routers.onecx-welcome-svc.rule=Host(`onecx-welcome-svc`)"
+    env_file:
+      - common.env
+      - svc.env
+    networks:
+      - example
+
+  onecx-welcome-bff:
+    image: ${ONECX_WELCOME_BFF}
+    environment:
+      ONECX_PERMISSIONS_PRODUCT_NAME: "onecx-welcome"
+    healthcheck:
+      test: curl --head -fsS http://localhost:8080/q/health
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    depends_on:
+      onecx-welcome-svc:
+        condition: service_healthy
+    labels:
+      - "traefik.http.services.onecx-welcome-bff.loadbalancer.server.port=8080"
+      - "traefik.http.routers.onecx-welcome-bff.rule=Host(`onecx-welcome-bff`)"
+      # - "traefik.http.routers.local_mfe.entrypoints=web"
+      # - "traefik.http.routers.local_mfe.rule=Host(`local-proxy`)&&PathPrefix(`/mfe/welcome/`)"
+      # - "traefik.http.routers.local_mfe.service=local_mfe@file"
+    env_file:
+      - common.env
+      - bff.env
+    networks:
+      - example
+    profiles:
+      - all
+
+  onecx-welcome-ui:
+    image: ${ONECX_WELCOME_UI}
+    environment:
+      APP_BASE_HREF: "/mfe/welcome/"
+      APP_ID: "onecx-welcome-ui"
+      PRODUCT_NAME: "onecx-welcome"
+    depends_on:
+      onecx-welcome-bff:
+        condition: service_healthy
+    labels:
+      - "traefik.http.services.onecx-welcome-ui.loadbalancer.server.port=8080"
+      - "traefik.http.routers.onecx-welcome-ui.rule=Host(`local-proxy`)&&PathPrefix(`/mfe/welcome/`)"
+    networks:
+      - example
+    profiles:
+      - all
 
 volumes:
   postgres:

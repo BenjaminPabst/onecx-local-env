@@ -1,6 +1,15 @@
 {
     "id": "import-assignemnts-onecx",
     "assignments": {
+		"onecx-shell": {
+			"onecx-shell-bff": {
+				"onecx-admin": {
+				  "workspaceConfig": [ "read" ],
+				  "userProfile": [ "read" ],
+				  "permission": [ "read" ]
+				}
+			}
+		},
         "onecx-permission": {
 			"onecx-permission-bff": {
 				"onecx-admin": {
@@ -78,12 +87,12 @@
 		"onecx-user-profile": {
 			"onecx-user-profile-bff": {
 				"onecx-admin": {
-					"user-profile": [ "read", "write", "delete" ]
+					"userProfile": [ "read", "write", "delete", "adminRead", "adminWrite", "adminDelete" ]
 				}
 			},
 			"onecx-user-profile-ui": {
 				"onecx-admin": {
-					"USERPROFILE": [ "CREATE", "DELETE", "EDIT", "SAVE", "SEARCH", "VIEW", "EXPORT", "IMPORT" ],
+					"USERPROFILE": [ "CREATE", "DELETE", "EDIT", "SAVE", "SEARCH", "VIEW", "EXPORT", "IMPORT", "ADMIN_VIEW", "ADMIN_EDIT", "ADMIN_DELETE" ],
 					"ACCOUNT_SETTINGS": [ "VIEW" ],
 					"ACCOUNT_SETTINGS_LAYOUT_MENU": [ "EDIT" ],
 					"ACCOUNT_SETTINGS_COLOR_SCHEME": [ "EDIT" ],
@@ -109,7 +118,8 @@
 					"menu": [ "read", "write", "delete" ],
 					"role": [ "read", "write", "delete" ],
 					"slot": [ "read", "write", "delete" ],
-					"workspace": [ "read", "write", "delete" ]
+					"workspace": [ "read", "write", "delete" ],
+					"product": [ "read", "write", "delete" ]
 				}
 			},
 			"onecx-workspace-ui": {
@@ -121,6 +131,18 @@
 					"WORKSPACE_PRODUCTS": [ "VIEW", "REGISTER" ],
 					"WORKSPACE_ROLE": [ "CREATE", "DELETE", "EDIT", "VIEW" ],
 					"WORKSPACE_SLOT": [ "CREATE", "DELETE", "EDIT", "VIEW" ]
+				}
+			}
+		},
+		"onecx-welcome": {
+			"onecx-welcome-bff": {
+				"onecx-admin": {
+					"image": [ "read", "write", "delete" ]
+				}
+			},
+			"onecx-welcome-ui": {
+				"onecx-admin": {
+					"IMAGE": ["DELETE", "EDIT", "VIEW"]
 				}
 			}
 		}
