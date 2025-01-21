@@ -217,7 +217,7 @@ export class SyncUICommand implements OnecxCommand<SyncUIData> {
         ...data,
         uiName,
       },
-      { dryRun: true, ...options }
+      options
     );
     // Permissions
     new SyncPermissions().synchronize(
@@ -227,7 +227,7 @@ export class SyncUICommand implements OnecxCommand<SyncUIData> {
         uiName,
         roleName: options["role"],
       },
-      { dryRun: true, ...options }
+      options
     );
     // Microservices
     new SyncMicroservices().synchronize(
@@ -236,7 +236,7 @@ export class SyncUICommand implements OnecxCommand<SyncUIData> {
         ...data,
         uiName,
       },
-      { dryRun: true, ...options }
+      options
     );
 
     // Products
@@ -246,7 +246,7 @@ export class SyncUICommand implements OnecxCommand<SyncUIData> {
         ...data,
         icon: options["icon"],
       },
-      { dryRun: true, ...options }
+      options
     );
     // Slots
     new SyncSlots().synchronize(
@@ -255,7 +255,7 @@ export class SyncUICommand implements OnecxCommand<SyncUIData> {
         ...data,
         uiName,
       },
-      { dryRun: true, ...options }
+      options
     );
     console.log("UI synchronized successfully.");
   }

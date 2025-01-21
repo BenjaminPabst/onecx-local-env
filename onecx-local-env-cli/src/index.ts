@@ -24,6 +24,7 @@ cli
   )
   .option("-r, --role <role>", "Role name for the assignments", "onecx-admin")
   .option("-i, --icon <iconName>", "The icon of the product", "pi-briefcase")
+  .option("-d, --dry", "If should do a dry run", false)
   .action((productName, basePath, pathToValues, options) => {
     console.log("Syncing UI: ", pathToValues, productName, options);
     new SyncUICommand().run(
@@ -48,6 +49,7 @@ cli
   )
   .option("-r, --role <role>", "Role name for the assignments", "onecx-admin")
   .option("-i, --icon <iconName>", "The icon of the product", "pi-briefcase")
+  .option("-d, --dry", "If should do a dry run", false)
   .action((productName, basePath, pathToValues, options) => {
     console.log("Syncing UI: ", pathToValues, productName, options);
     new RemoveSyncUICommand().run(

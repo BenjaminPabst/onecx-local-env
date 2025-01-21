@@ -16,7 +16,7 @@ export class SyncSlots implements SynchronizationStep<SyncSlotsParameters> {
   synchronize(
     values: any,
     parameters: SyncSlotsParameters,
-    { env, dryRun }: SynchronizationStepOptions
+    { env, dry: dryRun }: SynchronizationStepOptions
   ): void {
     let importsDirectory = getImportsDirectory(
       "./imports/product-store/slots",
@@ -75,7 +75,7 @@ export class SyncSlots implements SynchronizationStep<SyncSlotsParameters> {
       const fileName = `${input.productName}_${input.uiName}_${key}.json`;
       const filePath = path.join(importsDirectory, fileName);
 
-      if (options.dryRun) {
+      if (options.dry) {
         console.log(`Dry Run: Would remove file at ${filePath}`);
       } else {
         if (fs.existsSync(filePath)) {

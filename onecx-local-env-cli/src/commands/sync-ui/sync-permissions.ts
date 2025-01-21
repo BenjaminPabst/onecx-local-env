@@ -18,7 +18,7 @@ export class SyncPermissions
   synchronize(
     values: any,
     parameters: SyncPermissionsParameters,
-    { dryRun, env }: SynchronizationStepOptions
+    { dry: dryRun, env }: SynchronizationStepOptions
   ): void {
     let importsDir = getImportsDirectory("./imports/permissions", env);
 
@@ -122,7 +122,7 @@ export class SyncPermissions
     const filePath = path.join(importsDir, fileName);
 
     if (fs.existsSync(filePath)) {
-      if (options.dryRun) {
+      if (options.dry) {
         console.log(`Dry Run: Would remove file at ${filePath}`);
       } else {
         fs.unlinkSync(filePath);
@@ -153,7 +153,7 @@ export class SyncPermissions
       assignments.assignments[input.productName][input.uiName] &&
       assignments.assignments[input.productName][input.uiName][input.roleName]
     ) {
-      if (options.dryRun) {
+      if (options.dry) {
         console.log(
           `Dry Run: Would remove assignments for role ${input.roleName} in UI ${input.uiName} for product ${input.productName}`
         );

@@ -17,7 +17,7 @@ export class SyncProducts
   synchronize(
     values: any,
     parameters: SyncProductsParameters,
-    { dryRun, env }: SynchronizationStepOptions
+    { dry: dryRun, env }: SynchronizationStepOptions
   ): void {
     let importsDir = getImportsDirectory(
       "./imports/product-store/products/",
@@ -60,7 +60,7 @@ export class SyncProducts
 
     const filePath = path.resolve(importsDir, `${input.productName}.json`);
 
-    if (options.dryRun) {
+    if (options.dry) {
       console.log(`Dry Run: Would remove file at ${filePath}`);
     } else {
       if (fs.existsSync(filePath)) {

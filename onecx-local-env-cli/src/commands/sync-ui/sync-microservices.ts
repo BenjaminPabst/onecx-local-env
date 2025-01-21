@@ -17,7 +17,7 @@ export class SyncMicroservices
   synchronize(
     values: any,
     parameters: SyncMicroservicesParameters,
-    { dryRun, env }: SynchronizationStepOptions
+    { dry: dryRun, env }: SynchronizationStepOptions
   ): void {
     let importsDir = getImportsDirectory(
       "./imports/product-store/microservices/",
@@ -59,7 +59,7 @@ export class SyncMicroservices
     const fileName = `${input.productName}_${input.uiName}.json`;
     const filePath = path.join(importsDir, fileName);
 
-    if (options.dryRun) {
+    if (options.dry) {
       console.log(`Dry Run: Would remove file at ${filePath}`);
     } else {
       if (fs.existsSync(filePath)) {

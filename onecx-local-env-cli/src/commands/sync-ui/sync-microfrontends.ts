@@ -17,7 +17,7 @@ export class SyncMicrofrontends
   synchronize(
     values: any,
     parameters: SyncMicrofrontendsParameters,
-    { dryRun, env }: SynchronizationStepOptions
+    { dry: dryRun, env }: SynchronizationStepOptions
   ): void {
     let importsDirectory = getImportsDirectory(
       "./imports/product-store/microfrontends",
@@ -99,7 +99,7 @@ export class SyncMicrofrontends
       const filePath = path.join(importsDirectory, fileName);
 
       if (fs.existsSync(filePath)) {
-        if (options.dryRun) {
+        if (options.dry) {
           console.log(`Dry Run: Would remove ${filePath}`);
         } else {
           fs.unlinkSync(filePath);

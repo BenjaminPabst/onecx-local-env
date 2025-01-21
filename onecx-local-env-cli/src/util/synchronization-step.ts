@@ -1,5 +1,5 @@
 export interface SynchronizationStepOptions {
-  dryRun: boolean;
+  dry?: boolean;
   env?: string | undefined;
 }
 

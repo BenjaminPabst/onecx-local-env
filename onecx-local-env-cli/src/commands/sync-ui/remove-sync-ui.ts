@@ -47,7 +47,7 @@ export class RemoveSyncUICommand implements OnecxCommand<SyncUIData> {
         ...data,
         uiName,
       },
-      { dryRun: true, ...options }
+      options
     );
     // Permissions
     new SyncPermissions().removeSynchronization(
@@ -57,7 +57,7 @@ export class RemoveSyncUICommand implements OnecxCommand<SyncUIData> {
         uiName,
         roleName: options["role"],
       },
-      { dryRun: true, ...options }
+      options
     );
     // Microservices
     new SyncMicroservices().removeSynchronization(
@@ -66,7 +66,7 @@ export class RemoveSyncUICommand implements OnecxCommand<SyncUIData> {
         ...data,
         uiName,
       },
-      { dryRun: true, ...options }
+      options
     );
 
     // Products
@@ -76,7 +76,7 @@ export class RemoveSyncUICommand implements OnecxCommand<SyncUIData> {
         ...data,
         icon: options["icon"],
       },
-      { dryRun: true, ...options }
+      options
     );
     // Slots
     new SyncSlots().removeSynchronization(
@@ -85,7 +85,7 @@ export class RemoveSyncUICommand implements OnecxCommand<SyncUIData> {
         ...data,
         uiName,
       },
-      { dryRun: true, ...options }
+      options
     );
 
     console.log("UI removed successfully.");
