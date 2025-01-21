@@ -1,25 +1,11 @@
 import fs from "fs";
-import yaml from "js-yaml";
 import path from "path";
 import {
   SynchronizationStep,
   SynchronizationStepOptions,
 } from "../../util/synchronization-step";
-import { SyncUIData } from "./sync-ui";
 import { getImportsDirectory } from "../../util/utils";
-
-/**
- * Folder ./imports/product-store/products/
-Each Product has own file:
-onecx-workspace.json:
-{
-    "version": "xxx",
-    "description": "OneCX Workspace",
-    "basePath": "/workspace",
-    "displayName": "OneCX Workspace",
-    "icon": "pi-ellipsis-h"
-}
- */
+import { SyncUIData } from "./sync-ui";
 
 export interface SyncProductsParameters extends SyncUIData {
   icon: string;

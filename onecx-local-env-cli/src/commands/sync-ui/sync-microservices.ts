@@ -1,25 +1,11 @@
-/*
-Folder ./imports/product-store/microservices/
-Each UI has own file:
-productName_uiName.json:
-
-onecx-workspace_onecx-workspace-ui.json:
-{
-    "version": "xxx",
-    "description": "onecx-workspace-ui",
-    "name": "onecx-workspace-ui",
-    "type": "ui"
-}
-*/
 import fs from "fs";
 import path from "path";
-import yaml from "js-yaml";
-import { SyncUIData } from "./sync-ui";
 import {
   SynchronizationStep,
   SynchronizationStepOptions,
 } from "../../util/synchronization-step";
 import { getImportsDirectory } from "../../util/utils";
+import { SyncUIData } from "./sync-ui";
 
 export interface SyncMicroservicesParameters extends SyncUIData {
   uiName: string;

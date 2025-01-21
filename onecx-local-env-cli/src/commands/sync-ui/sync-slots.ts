@@ -1,34 +1,12 @@
 import fs from "fs";
-import yaml from "js-yaml";
 import path from "path";
 import {
   SynchronizationStep,
   SynchronizationStepOptions,
 } from "../../util/synchronization-step";
 
-import { SyncUIData } from "./sync-ui";
 import { getImportsDirectory } from "../../util/utils";
-
-/**
- * Folder ./imports/product-store/slots/
-onecx-workspace_onecx-workspace-ui_onecx-avatar-image.json:
-{
-    "description": "User Profile avatar image",
-    "name": "onecx-avatar-image",
-    "deprecated": false,
-    "undeployed": false
-}
-
-Corresponds to values.yml at
-app.operators.slot:
-
-    slot:
-      enabled: true
-      specs:
-        onecx-avatar-image:
-          name: 'onecx-avatar-image'
-          description: 'User Profile avatar image'
- */
+import { SyncUIData } from "./sync-ui";
 
 export interface SyncSlotsParameters extends SyncUIData {
   uiName: string;
