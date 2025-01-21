@@ -4,5 +4,5 @@ export interface SynchronizationStepOptions {
 }
 
 export interface SynchronizationStep {
-  synchronize(input: any, options: SynchronizationStepOptions): void;
+  synchronize(valuesYaml: string, input: any, options: SynchronizationStepOptions): void;
 }

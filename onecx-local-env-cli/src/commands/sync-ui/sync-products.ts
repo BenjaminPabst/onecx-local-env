@@ -6,6 +6,7 @@ import {
   SynchronizationStepOptions,
 } from "../../util/synchronization-step";
 import { SyncUIData } from "./sync-ui";
+import { getImportsDirectory } from "../../util/utils";
 
 /**
  * Folder ./imports/product-store/products/
@@ -21,42 +22,30 @@ onecx-workspace.json:
  */
 
 export interface SyncProductsParameters extends SyncUIData {
-  customUiName: string;
-  basePath: string;
   icon: string;
 }
 
 export class SyncProducts implements SynchronizationStep {
   synchronize(
-    input: SyncProductsParameters,
-    options: SynchronizationStepOptions
+    values: any,
+    parameters: SyncProductsParameters,
+    { dryRun, env }: SynchronizationStepOptions
   ): void {
-    let importsDir = path.resolve("./imports/product-store/products/");
-    if (options.env) {
-      const localEnvPath = path.resolve(options.env);
-      importsDir = path.resolve(localEnvPath, "imports/product-store/products");
-    }
-
-    const valuesFilePath = input.pathToValues;
-    const dryRun = options.dryRun || false;
-
-    if (!fs.existsSync(valuesFilePath)) {
-      throw new Error(`Values file not found at path: ${valuesFilePath}`);
-    }
-
-    const valuesFile = fs.readFileSync(valuesFilePath, "utf8");
-    const values = yaml.load(valuesFile) as any;
+    let importsDir = getImportsDirectory(
+      "./imports/product-store/products/",
+      env
+    );
 
     // Target file
-    const filePath = path.resolve(importsDir, `${input.productName}.json`);
+    const filePath = path.resolve(importsDir, `${parameters.productName}.json`);
 
     // Product JSON
     const product = {
       version: "xxx",
-      description: input.productName.replace(/-/g, " "),
-      basePath: input.basePath,
-      displayName: input.productName.replace(/-/g, " "),
-      iconName: input.icon,
+      description: parameters.productName.replace(/-/g, " "),
+      basePath: parameters.basePath,
+      displayName: parameters.productName.replace(/-/g, " "),
+      iconName: parameters.icon,
     };
 
     if (dryRun) {

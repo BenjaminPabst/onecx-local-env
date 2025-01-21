@@ -7,6 +7,7 @@ import {
 } from "../../util/synchronization-step";
 
 import { SyncUIData } from "./sync-ui";
+import { getImportsDirectory } from "../../util/utils";
 
 /**
  * Folder ./imports/product-store/slots/
@@ -30,45 +31,30 @@ app.operators.slot:
  */
 
 export interface SyncSlotsParameters extends SyncUIData {
-  customUiName: string;
+  uiName: string;
 }
 
 export class SyncSlots implements SynchronizationStep {
   synchronize(
-    input: SyncSlotsParameters,
-    options: SynchronizationStepOptions
+    values: any,
+    parameters: SyncSlotsParameters,
+    { env, dryRun }: SynchronizationStepOptions
   ): void {
-    let importsDir = path.resolve("./imports/product-store/slots/");
-    if (options.env) {
-      const localEnvPath = path.resolve(options.env);
-      importsDir = path.resolve(localEnvPath, "imports/product-store/slots");
-    }
-
-    const valuesFilePath = input.pathToValues;
-    const dryRun = options.dryRun || false;
-
-    if (!fs.existsSync(valuesFilePath)) {
-      throw new Error(`Values file not found at path: ${valuesFilePath}`);
-    }
-
-    const valuesFile = fs.readFileSync(valuesFilePath, "utf8");
-    const values = yaml.load(valuesFile) as any;
+    let importsDirectory = getImportsDirectory(
+      "./imports/product-store/slots",
+      env
+    );
 
     if (!values.app || !values.app.operator || !values.app.operator.slot) {
       console.log("No slots found in values file. Skipping synchronization.");
-      return;      
-    }
-
-    let uiName = values.app.image.repository.split("/").pop();
-    if (input.customUiName) {
-      uiName = input.customUiName;
+      return;
     }
 
     const slots = values.app.operator.slot.specs;
 
     for (const [key, spec] of Object.entries(slots) as [string, any][]) {
-      const fileName = `${input.productName}_${uiName}_${key}.json`;
-      const filePath = path.join(importsDir, fileName);
+      const fileName = `${parameters.productName}_${parameters.uiName}_${key}.json`;
+      const filePath = path.join(importsDirectory, fileName);
 
       const jsonContent = {
         description: spec.description,

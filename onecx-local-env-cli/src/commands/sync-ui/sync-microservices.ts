@@ -19,55 +19,30 @@ import {
   SynchronizationStep,
   SynchronizationStepOptions,
 } from "../../util/synchronization-step";
+import { getImportsDirectory } from "../../util/utils";
 
 export interface SyncMicroservicesParameters extends SyncUIData {
-  customUiName: string;
+  uiName: string;
 }
 
 export class SyncMicroservices implements SynchronizationStep {
   synchronize(
-    input: SyncMicroservicesParameters,
-    options: SynchronizationStepOptions
+    values: any,
+    parameters: SyncMicroservicesParameters,
+    { dryRun, env }: SynchronizationStepOptions
   ): void {
-    let importsDir = path.resolve("./imports/product-store/microservices/");
-    if (options.env) {
-      const localEnvPath = path.resolve(options.env);
-      importsDir = path.resolve(
-        localEnvPath,
-        "imports/product-store/microservices"
-      );
-    }
+    let importsDir = getImportsDirectory(
+      "./imports/product-store/microservices/",
+      env
+    );
 
-    const valuesFilePath = input.pathToValues;
-    const dryRun = options.dryRun || false;
-
-    if (!fs.existsSync(valuesFilePath)) {
-      throw new Error(`Values file not found at path: ${valuesFilePath}`);
-    }
-
-    const valuesFile = fs.readFileSync(valuesFilePath, "utf8");
-    const values = yaml.load(valuesFile) as any;
-
-    if (
-      !values.app ||
-      !values.app.operator ||
-      !values.app.operator.microfrontend
-    ) {
-      throw new Error("Invalid values file format");
-    }
-
-    let uiName = values.app.image.repository.split("/").pop();
-    if (input.customUiName) {
-      uiName = input.customUiName;
-    }
-
-    const fileName = `${input.productName}_${uiName}.json`;
+    const fileName = `${parameters.productName}_${parameters.uiName}.json`;
     const filePath = path.join(importsDir, fileName);
 
     const jsonContent = {
       version: "xxx",
-      description: uiName,
-      name: uiName,
+      description: parameters.uiName,
+      name: parameters.uiName,
       type: "ui",
     };
 

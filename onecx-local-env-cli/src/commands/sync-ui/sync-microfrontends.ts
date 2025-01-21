@@ -52,61 +52,48 @@ with the suffix for the respective key
 */
 
 import fs from "fs";
-import yaml from "js-yaml";
 import path from "path";
 import {
   SynchronizationStep,
   SynchronizationStepOptions,
 } from "../../util/synchronization-step";
+import { getImportsDirectory } from "../../util/utils";
 import { SyncUIData } from "./sync-ui";
 
 export interface SyncMicrofrontendsParameters extends SyncUIData {
-  customUiName: string;
+  uiName: string;
 }
 
 export class SyncMicrofrontends implements SynchronizationStep {
   synchronize(
-    input: SyncMicrofrontendsParameters,
-    options: SynchronizationStepOptions
+    values: any,
+    parameters: SyncMicrofrontendsParameters,
+    { dryRun, env }: SynchronizationStepOptions
   ): void {
-    let importsDir = path.resolve("./imports/product-store/microfrontends/");
-    if (options.env) {
-      const localEnvPath = path.resolve(options.env);
-      importsDir = path.resolve(
-        localEnvPath,
-        "imports/product-store/microfrontends"
-      );
-    }
-
-    const valuesFilePath = input.pathToValues;
-    const dryRun = options.dryRun || false;
-
-    if (!fs.existsSync(valuesFilePath)) {
-      throw new Error(`Values file not found at path: ${valuesFilePath}`);
-    }
-
-    const valuesFile = fs.readFileSync(valuesFilePath, "utf8");
-    const values = yaml.load(valuesFile) as any;
+    let importsDirectory = getImportsDirectory(
+      "./imports/product-store/microfrontends",
+      env
+    );
 
     if (
       !values.app ||
       !values.app.operator ||
       !values.app.operator.microfrontend
     ) {
-      throw new Error("Invalid values file format");
+      console.log(
+        "No microfrontends found in values file. Skipping synchronization."
+      );
+      return;
     }
-    let uiName = values.app.image.repository.split("/").pop();
-    if (input.customUiName) {
-      uiName = input.customUiName;
-    }
+
     const microfrontends = values.app.operator.microfrontend.specs;
 
     for (const [key, spec] of Object.entries(microfrontends) as [
       string,
       any
     ][]) {
-      const fileName = `${input.productName}_${uiName}-${key}.json`;
-      const filePath = path.join(importsDir, fileName);
+      const fileName = `${parameters.productName}_${parameters.uiName}-${key}.json`;
+      const filePath = path.join(importsDirectory, fileName);
 
       const jsonContent = {
         appVersion: "xxx",

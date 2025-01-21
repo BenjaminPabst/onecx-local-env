@@ -124,74 +124,46 @@ import {
   SynchronizationStepOptions,
 } from "../../util/synchronization-step";
 import { SyncUIData } from "./sync-ui";
+import { getImportsDirectory } from "../../util/utils";
 
 export interface SyncPermissionsParameters extends SyncUIData {
-  customUiName: string;
+  uiName: string;
   roleName: string;
 }
 
 export class SyncPermissions implements SynchronizationStep {
   synchronize(
-    input: SyncPermissionsParameters,
-    options: SynchronizationStepOptions
+    values: any,
+    parameters: SyncPermissionsParameters,
+    { dryRun, env }: SynchronizationStepOptions
   ): void {
-    let importsDir = path.resolve("./imports/permissions");
-    if (options.env) {
-      const localEnvPath = path.resolve(options.env);
-      importsDir = path.resolve(localEnvPath, "imports/permissions");
-    }
-
-    const valuesFilePath = input.pathToValues;
-    const dryRun = options.dryRun || false;
-
-    if (!fs.existsSync(valuesFilePath)) {
-      throw new Error(`Values file not found at path: ${valuesFilePath}`);
-    }
-
-    const valuesFile = fs.readFileSync(valuesFilePath, "utf8");
-    const values = yaml.load(valuesFile) as any;
+    let importsDir = getImportsDirectory("./imports/permissions", env);
 
     if (
       !values.app ||
       !values.app.operator ||
-      !values.app.operator.permission
+      !values.app.operator.permission ||
+      !values.app.operator.permission.spec ||
+      !values.app.operator.permission.spec.permissions ||
+      Object.keys(values.app.operator.permission.spec.permissions).length === 0
     ) {
-      throw new Error("Invalid values file format");
-    }
-
-    const permissions = values.app.operator.permission.spec.permissions;
-
-    // Check if permissions are empty
-    if (!permissions || Object.keys(permissions).length === 0) {
       console.log(
         "No permissions found in values file. Skipping synchronization."
       );
       return;
     }
-    // Check if repository is provided or custom name is provided
-    if (!values.app.image.repository && !input.customUiName) {
-      throw new Error(
-        "No repository found in values file and no custom name provided."
-      );
-    }
-    let uiName = input.customUiName;
-    if (values.app.image.repository) {
-      uiName = values.app.image.repository.split("/").pop();
-    }
-
-    const fileName = `${input.productName}_${uiName}.json`;
+    const fileName = `${parameters.productName}_${parameters.uiName}.json`;
     const filePath = path.join(importsDir, fileName);
 
     const permissionFile: {
       name: string;
       permissions: { resource: string; action: string }[];
-    } = { name: uiName, permissions: [] };
+    } = { name: parameters.uiName, permissions: [] };
 
     // Build permissions array
-    for (const [resource, uiPermissions] of Object.entries(permissions) as [
-      string,
-      any
-    ][]) {
+    for (const [resource, uiPermissions] of Object.entries(
+      values.app.operator.permission.spec.permissions
+    ) as [string, any][]) {
       permissionFile.permissions.push(
         ...Object.keys(uiPermissions).map((action: string) => ({
           resource,
@@ -210,11 +182,7 @@ export class SyncPermissions implements SynchronizationStep {
     }
 
     // Sync assignments
-    let assignmentsDir = path.resolve("./imports/assignments");
-    if (options.env) {
-      const localEnvPath = path.resolve(options.env);
-      assignmentsDir = path.resolve(localEnvPath, "imports/assignments");
-    }
+    let assignmentsDir = getImportsDirectory("./imports/assignments", env);
     const assignmentsFilePath = path.join(assignmentsDir, "onecx.json");
 
     if (!fs.existsSync(assignmentsFilePath)) {
@@ -227,23 +195,22 @@ export class SyncPermissions implements SynchronizationStep {
     const assignments = JSON.parse(assignmentsFile);
 
     // Section for product in assignments
-    if (!assignments.assignments[input.productName]) {
-      assignments.assignments[input.productName] = {};
+    if (!assignments.assignments[parameters.productName]) {
+      assignments.assignments[parameters.productName] = {};
     }
-    const productSection = assignments.assignments[input.productName];
+    const productSection = assignments.assignments[parameters.productName];
     // Section for UI in product section
-    if (!productSection[uiName]) {
-      productSection[uiName] = {};
+    if (!productSection[parameters.uiName]) {
+      productSection[parameters.uiName] = {};
     }
-    const uiSection = productSection[uiName];
+    const uiSection = productSection[parameters.uiName];
     // Target role
-    const targetRole = input.roleName;
+    const targetRole = parameters.roleName;
     // Clear & Set permissions
     uiSection[targetRole] = {};
-    for (const [resource, uiPermissions] of Object.entries(permissions) as [
-      string,
-      any
-    ][]) {
+    for (const [resource, uiPermissions] of Object.entries(
+      values.app.operator.permission.spec.permissions
+    ) as [string, any][]) {
       uiSection[targetRole][resource] = Object.keys(uiPermissions);
     }
 
