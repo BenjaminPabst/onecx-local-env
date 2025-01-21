@@ -176,11 +176,15 @@ permission:
 
 import { OnecxCommand } from "../onecx-command";
 import { SyncMicrofrontends } from "./sync-microfrontends";
+import { SyncMicroservices } from "./sync-microservices";
 import { SyncPermissions } from "./sync-permissions";
+import { SyncProducts } from "./sync-products";
+import { SyncSlots } from "./sync-slots";
 
 export interface SyncUIData {
   productName: string;
   pathToValues: string;
+  basePath: string;
 }
 
 export class SyncUICommand implements OnecxCommand<SyncUIData> {
@@ -203,6 +207,32 @@ export class SyncUICommand implements OnecxCommand<SyncUIData> {
         ...data,
         customUiName: options["name"],
         roleName: options["role"],
+      },
+      { dryRun: true, ...options }
+    );
+    // Microservices
+    new SyncMicroservices().synchronize(
+      {
+        ...data,
+        customUiName: options["name"],
+      },
+      { dryRun: true, ...options }
+    );
+
+    // Products
+    new SyncProducts().synchronize(
+      {
+        ...data,
+        customUiName: options["name"],
+        icon: options["icon"],
+      },
+      { dryRun: true, ...options }
+    );
+    // Slots
+    new SyncSlots().synchronize(
+      {
+        ...data,
+        customUiName: options["name"],
       },
       { dryRun: true, ...options }
     );
