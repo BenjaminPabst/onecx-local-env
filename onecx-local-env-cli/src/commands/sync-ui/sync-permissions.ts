@@ -127,6 +127,7 @@ import { SyncUIData } from "./sync-ui";
 
 export interface SyncPermissionsParameters extends SyncUIData {
   customUiName: string;
+  roleName: string;
 }
 
 export class SyncPermissions implements SynchronizationStep {
@@ -135,8 +136,8 @@ export class SyncPermissions implements SynchronizationStep {
     options: SynchronizationStepOptions
   ): void {
     let importsDir = path.resolve("./imports/permissions");
-    if (options.pathToLocalEnv) {
-      const localEnvPath = path.resolve(options.pathToLocalEnv);
+    if (options.env) {
+      const localEnvPath = path.resolve(options.env);
       importsDir = path.resolve(localEnvPath, "imports/permissions");
     }
 
@@ -206,6 +207,56 @@ export class SyncPermissions implements SynchronizationStep {
       );
     } else {
       fs.writeFileSync(filePath, JSON.stringify(permissionFile, null, 2));
+    }
+
+    // Sync assignments
+    let assignmentsDir = path.resolve("./imports/assignments");
+    if (options.env) {
+      const localEnvPath = path.resolve(options.env);
+      assignmentsDir = path.resolve(localEnvPath, "imports/assignments");
+    }
+    const assignmentsFilePath = path.join(assignmentsDir, "onecx.json");
+
+    if (!fs.existsSync(assignmentsFilePath)) {
+      throw new Error(
+        `Assignments file not found at path: ${assignmentsFilePath}`
+      );
+    }
+
+    const assignmentsFile = fs.readFileSync(assignmentsFilePath, "utf8");
+    const assignments = JSON.parse(assignmentsFile);
+
+    // Section for product in assignments
+    if (!assignments.assignments[input.productName]) {
+      assignments.assignments[input.productName] = {};
+    }
+    const productSection = assignments.assignments[input.productName];
+    // Section for UI in product section
+    if (!productSection[uiName]) {
+      productSection[uiName] = {};
+    }
+    const uiSection = productSection[uiName];
+    // Target role
+    const targetRole = input.roleName;
+    // Clear & Set permissions
+    uiSection[targetRole] = {};
+    for (const [resource, uiPermissions] of Object.entries(permissions) as [
+      string,
+      any
+    ][]) {
+      uiSection[targetRole][resource] = Object.keys(uiPermissions);
+    }
+
+    if (dryRun) {
+      console.log(
+        `Dry Run: Would write to ${assignmentsFilePath} with content:`,
+        JSON.stringify(assignments, null, 2)
+      );
+    } else {
+      fs.writeFileSync(
+        assignmentsFilePath,
+        JSON.stringify(assignments, null, 2)
+      );
     }
 
     console.log("Permissions synchronized successfully.");

@@ -188,24 +188,23 @@ export class SyncUICommand implements OnecxCommand<SyncUIData> {
     console.log("Syncing UI with data: ", data, " and options: ", options);
 
     // Splitting sync into steps: Microfrontends, Microservices, Products, Slots, Permissions
-    let _options = {
-      valuesFilePath: options.ui,
-    };
+
     // Microfrontends
     new SyncMicrofrontends().synchronize(
       {
         ...data,
         customUiName: options["name"],
       },
-      { dryRun: true }
+      { dryRun: true, ...options }
     );
     // Permissions
     new SyncPermissions().synchronize(
       {
         ...data,
         customUiName: options["name"],
+        roleName: options["role"],
       },
-      { dryRun: true }
+      { dryRun: true, ...options }
     );
   }
 }

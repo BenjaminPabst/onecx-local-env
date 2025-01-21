@@ -20,6 +20,7 @@ cli
     "-n, --name <name>",
     "Custom name for the UI, if repository should not be used"
   )
+  .option("-r, --role <role>", "Role name for the assignments", "onecx-admin")
   .action((productName, pathToValues, options) => {
     console.log("Syncing UI: ", pathToValues, productName, options);
     new SyncUICommand().run(

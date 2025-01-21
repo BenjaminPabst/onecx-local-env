@@ -1,6 +1,6 @@
 export interface SynchronizationStepOptions {
   dryRun: boolean;
-  pathToLocalEnv?: string | undefined;
+  env?: string | undefined;
 }
 
 export interface SynchronizationStep {

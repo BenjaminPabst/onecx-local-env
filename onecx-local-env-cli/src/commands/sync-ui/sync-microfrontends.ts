@@ -70,8 +70,8 @@ export class SyncMicrofrontends implements SynchronizationStep {
     options: SynchronizationStepOptions
   ): void {
     let importsDir = path.resolve("./imports/product-store/microfrontends/");
-    if (options.pathToLocalEnv) {
-      const localEnvPath = path.resolve(options.pathToLocalEnv);
+    if (options.env) {
+      const localEnvPath = path.resolve(options.env);
       importsDir = path.resolve(
         localEnvPath,
         "imports/product-store/microfrontends"
