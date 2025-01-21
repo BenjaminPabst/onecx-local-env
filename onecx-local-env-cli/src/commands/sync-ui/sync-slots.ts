@@ -12,7 +12,7 @@ export interface SyncSlotsParameters extends SyncUIData {
   uiName: string;
 }
 
-export class SyncSlots implements SynchronizationStep {
+export class SyncSlots implements SynchronizationStep<SyncSlotsParameters> {
   synchronize(
     values: any,
     parameters: SyncSlotsParameters,
@@ -52,5 +52,41 @@ export class SyncSlots implements SynchronizationStep {
     }
 
     console.log("Slots synchronized successfully.");
+  }
+
+  removeSynchronization(
+    values: any,
+    input: SyncSlotsParameters,
+    options: SynchronizationStepOptions
+  ): void {
+    let importsDirectory = getImportsDirectory(
+      "./imports/product-store/slots",
+      options.env
+    );
+
+    if (!values.app || !values.app.operator || !values.app.operator.slot) {
+      console.log("No slots found in values file. Skipping removal.");
+      return;
+    }
+
+    const slots = values.app.operator.slot.specs;
+
+    for (const key of Object.keys(slots)) {
+      const fileName = `${input.productName}_${input.uiName}_${key}.json`;
+      const filePath = path.join(importsDirectory, fileName);
+
+      if (options.dryRun) {
+        console.log(`Dry Run: Would remove file at ${filePath}`);
+      } else {
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+          console.log(`Removed file at ${filePath}`);
+        } else {
+          console.log(`File not found at ${filePath}, skipping removal.`);
+        }
+      }
+    }
+
+    console.log("Slots removal completed successfully.");
   }
 }

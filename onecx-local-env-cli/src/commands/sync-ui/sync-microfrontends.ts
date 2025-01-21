@@ -11,7 +11,9 @@ export interface SyncMicrofrontendsParameters extends SyncUIData {
   uiName: string;
 }
 
-export class SyncMicrofrontends implements SynchronizationStep {
+export class SyncMicrofrontends
+  implements SynchronizationStep<SyncMicrofrontendsParameters>
+{
   synchronize(
     values: any,
     parameters: SyncMicrofrontendsParameters,
@@ -69,5 +71,44 @@ export class SyncMicrofrontends implements SynchronizationStep {
     }
 
     console.log("Microfrontends synchronized successfully.");
+  }
+
+  removeSynchronization(
+    values: any,
+    input: SyncMicrofrontendsParameters,
+    options: SynchronizationStepOptions
+  ): void {
+    let importsDirectory = getImportsDirectory(
+      "./imports/product-store/microfrontends",
+      options.env
+    );
+
+    if (
+      !values.app ||
+      !values.app.operator ||
+      !values.app.operator.microfrontend
+    ) {
+      console.log("No microfrontends found in values file. Skipping removal.");
+      return;
+    }
+
+    const microfrontends = values.app.operator.microfrontend.specs;
+
+    for (const key of Object.keys(microfrontends)) {
+      const fileName = `${input.productName}_${input.uiName}_${key}.json`;
+      const filePath = path.join(importsDirectory, fileName);
+
+      if (fs.existsSync(filePath)) {
+        if (options.dryRun) {
+          console.log(`Dry Run: Would remove ${filePath}`);
+        } else {
+          fs.unlinkSync(filePath);
+        }
+      } else {
+        console.log(`File ${filePath} does not exist. Skipping.`);
+      }
+    }
+
+    console.log("Microfrontends removal completed successfully.");
   }
 }

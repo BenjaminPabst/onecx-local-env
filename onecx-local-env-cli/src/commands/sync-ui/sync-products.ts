@@ -11,7 +11,9 @@ export interface SyncProductsParameters extends SyncUIData {
   icon: string;
 }
 
-export class SyncProducts implements SynchronizationStep {
+export class SyncProducts
+  implements SynchronizationStep<SyncProductsParameters>
+{
   synchronize(
     values: any,
     parameters: SyncProductsParameters,
@@ -44,5 +46,30 @@ export class SyncProducts implements SynchronizationStep {
     }
 
     console.log("Product synchronized successfully.");
+  }
+
+  removeSynchronization(
+    _: any,
+    input: SyncProductsParameters,
+    options: SynchronizationStepOptions
+  ): void {
+    let importsDir = getImportsDirectory(
+      "./imports/product-store/products/",
+      options.env
+    );
+
+    const filePath = path.resolve(importsDir, `${input.productName}.json`);
+
+    if (options.dryRun) {
+      console.log(`Dry Run: Would remove file at ${filePath}`);
+    } else {
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+        console.log("Product removed successfully.");
+      } else {
+        console.log("Product file does not exist.");
+      }
+    }
+    console.log("Product removal completed successfully.");
   }
 }

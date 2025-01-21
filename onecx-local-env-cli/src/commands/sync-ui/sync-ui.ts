@@ -257,5 +257,6 @@ export class SyncUICommand implements OnecxCommand<SyncUIData> {
       },
       { dryRun: true, ...options }
     );
+    console.log("UI synchronized successfully.");
   }
 }

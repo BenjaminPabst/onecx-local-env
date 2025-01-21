@@ -3,6 +3,7 @@ export interface SynchronizationStepOptions {
   env?: string | undefined;
 }
 
-export interface SynchronizationStep {
-  synchronize(valuesYaml: string, input: any, options: SynchronizationStepOptions): void;
+export interface SynchronizationStep<T> {
+  synchronize(values: any, input: T, options: SynchronizationStepOptions): void;
+  removeSynchronization(values: any, input: T, options: SynchronizationStepOptions): void;
 }
